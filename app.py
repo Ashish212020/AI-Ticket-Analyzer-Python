@@ -4,15 +4,19 @@ from transformers import pipeline
 # Initialize the Flask app
 app = Flask(__name__)
 
-# Load the NLP pipelines
-# We use "zero-shot-classification" to define our own categories on the fly
-classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli") 
 
-# A standard sentiment model
+# Load the NLP pipelines
+print("Loading classification model...")
+# Using a smaller, distilled model for zero-shot
+classifier = pipeline("zero-shot-classification", model="valhalla/distilbart-mnli-12-3") 
+
+print("Loading sentiment model...")
+# This model is already small and efficient
 sentiment_analyzer = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
 
-# A summarization model
-summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-6-6")
+print("Loading summarization model...")
+# Using the t5-small model, which is much smaller
+summarizer = pipeline("summarization", model="t5-small")
 
 @app.route('/analyze', methods=['POST'])
 def analyze_text():
